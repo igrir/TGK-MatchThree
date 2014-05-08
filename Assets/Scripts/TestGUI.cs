@@ -30,6 +30,13 @@ public class TestGUI : MonoBehaviour {
 		if (GUI.Button(new Rect(0, 0, 100, 30),"Show hint")) {
 			gameBoardScript.showHint();
 		}
+
+		if (GUI.Button(new Rect(100, 0, 100, 30),"Reset")) {
+			gameBoardScript.reset();
+		}
+
+		GUI.TextArea(new Rect(0, 30, 100, 30), "score:"+gameBoardScript.score.ToString());
+		GUI.TextArea(new Rect(Screen.width-100, 30, 100, 30), "combo:"+gameBoardScript.combo.ToString());
 	}
 
 	// Use this for initialization

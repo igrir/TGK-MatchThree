@@ -153,6 +153,7 @@ public class GameBoard : MonoBehaviour {
 		firstHit = true;
 		didCombo = false;
 		combo = 0;
+		score = 0;
 
 		nodeArr = new Node[boardRow, boardCol];
 
@@ -735,6 +736,24 @@ public class GameBoard : MonoBehaviour {
 
 
 	public void reset(){
+
+		firstHit = true;
+		didCombo = false;
+		combo = 0;
+		score = 0;
+
+		swapBacked = false;
+		firstGameTapped = false;
+		
+		numNodeInCol = new int[boardCol];
+		zeroNumNodeInCol();
+
+		randomizeBoard();
+		
+		checkBoard();
+		
+		firstTap = true;
+
 	}
 
 	public void showHint(){
