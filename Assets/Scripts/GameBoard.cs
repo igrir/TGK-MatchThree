@@ -68,6 +68,8 @@ public class GameBoard : MonoBehaviour {
 	public GameObject hintPointer1;
 	public GameObject hintPointer2;
 
+	public GameObject selectPointer;
+
 	private bool hitted = false;	//status player make a score
 
 	private bool firstHit = true;
@@ -81,7 +83,9 @@ public class GameBoard : MonoBehaviour {
 	void Start () {
 		
 		_transform = GetComponent<Transform>();
-		nodePool = new NodePool(boardRow * boardCol);
+		nodePool = GetComponent<NodePool>();
+//		new NodePool(boardRow * boardCol)
+		nodePool.prefabricateNodes(boardRow*boardCol);
 
 		firstPos = new BoardPos();
 		secondPos = new BoardPos();
@@ -99,41 +103,47 @@ public class GameBoard : MonoBehaviour {
 				if(hit.collider.name == "node"){
 
 
-					//first in game tap check
-					if (!firstGameTapped) {
-						firstGameTapped = true;
-					}
-
-					Node node = hit.collider.GetComponent<Node>();
-
-					if (firstTap) {
-						firstPos = node.boardPos;
-
-						firstTap = false;
-
-						swapBacked = false;
-						hitted = false;
-						didCombo = false;
-
-					}else{
-
-						//check it's right to select
-						int distanceCol = Mathf.Abs(node.boardPos.col-firstPos.col);
-						int distanceRow = Mathf.Abs(node.boardPos.row-firstPos.row);
-
-						if (  (distanceCol == 0 && distanceRow == 1)	// 1 unit distance vertically
-						    ||(distanceCol == 1 && distanceRow == 0)	// 1 unit distance horizontally
-						    ) {
-							secondPos = node.boardPos;
-							
-							swapNode();
-							
-							firstTap = true;
+					// don't do any action if current board is still moving
+					if (!moving) {
+						//first in game tap check
+						if (!firstGameTapped) {
+							firstGameTapped = true;
 						}
+						
+						Node node = hit.collider.GetComponent<Node>();
+						
+						if (firstTap) {
+							selectPointer.SetActive(true);
+							selectPointer.transform.position = node.transform.position;
 
+							firstPos = node.boardPos;
+							
+							firstTap = false;
+							
+							swapBacked = false;
+							hitted = false;
+							didCombo = false;
 
+						}else{
 
+							selectPointer.SetActive(true);
+
+							//check it's right to select
+							int distanceCol = Mathf.Abs(node.boardPos.col-firstPos.col);
+							int distanceRow = Mathf.Abs(node.boardPos.row-firstPos.row);
+							
+							if (  (distanceCol == 0 && distanceRow == 1)	// 1 unit distance vertically
+							    ||(distanceCol == 1 && distanceRow == 0)	// 1 unit distance horizontally
+							    ) {
+								secondPos = node.boardPos;
+								
+								swapNode();
+								
+								firstTap = true;
+							}
+						}
 					}
+
 
 				}
 			}
@@ -149,7 +159,6 @@ public class GameBoard : MonoBehaviour {
 	}
 
 	public void init(){
-
 		firstHit = true;
 		didCombo = false;
 		combo = 0;
@@ -166,6 +175,7 @@ public class GameBoard : MonoBehaviour {
 		initNodesBoard();
 		randomizeBoard();
 
+		//DEBUG
 		checkBoard();
 
 		firstTap = true;
@@ -271,7 +281,7 @@ public class GameBoard : MonoBehaviour {
 				onFinishAnimate();
 				
 				//end doing check board
-				onFinishAnimate -= checkBoard;
+				onFinishAnimate -= checkBoard;	//move to checkboa
 				
 				
 
@@ -571,6 +581,7 @@ public class GameBoard : MonoBehaviour {
 
 				node.gameObject.transform.parent = _transform;
 
+
 				node.gameObject.transform.localScale = new Vector3(nodeXScale, nodeYScale);
 				node.gameObject.transform.localPosition = new Vector3((j*(nodeXScale+nodeWidth)),
 				                                    	 			  -(i*(nodeYScale+nodeHeight)));
@@ -600,6 +611,7 @@ public class GameBoard : MonoBehaviour {
 
 				node.typeId = nodeTypeId;				
 				node.setImage(nodeType[nodeTypeId].image);
+
 				node.score = nodeType[nodeTypeId].score;
 				nodeArr[i, j].typeId = nodeTypeId;
 			}
@@ -737,22 +749,25 @@ public class GameBoard : MonoBehaviour {
 
 	public void reset(){
 
-		firstHit = true;
-		didCombo = false;
-		combo = 0;
-		score = 0;
+		if (!moving) {
+			firstHit = true;
+			didCombo = false;
+			combo = 0;
+			score = 0;
+			
+			swapBacked = false;
+			firstGameTapped = false;
+			
+			numNodeInCol = new int[boardCol];
+			zeroNumNodeInCol();
+			
+			randomizeBoard();
+			
+			checkBoard();
+			
+			firstTap = true;
+		}
 
-		swapBacked = false;
-		firstGameTapped = false;
-		
-		numNodeInCol = new int[boardCol];
-		zeroNumNodeInCol();
-
-		randomizeBoard();
-		
-		checkBoard();
-		
-		firstTap = true;
 
 	}
 
@@ -764,11 +779,12 @@ public class GameBoard : MonoBehaviour {
 			setActiveHint(true);
 
 			//random hint position
-			int rand = Random.Range(0, availablePositions.Count-1);
+			int rand = Random.Range(0, availablePositions.Count);
 
 			NodeCouple randomNode = availablePositions[rand];
 			Vector3 randomNodeFirstPosition = randomNode.firstNode.transform.position;
 			Vector3 randomNodeSecondPosition = randomNode.secondNode.transform.position;
+
 
 			Vector3 hintPosition1 = new Vector3(randomNodeFirstPosition.x + (nodeWidth/2),
 			                                   randomNodeFirstPosition.y - (nodeHeight/2),

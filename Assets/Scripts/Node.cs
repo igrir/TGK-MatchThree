@@ -18,7 +18,7 @@ public class Node : MonoBehaviour {
 //	public Sprite image;
 
 	public float score;
-	public SpriteRenderer _spriteRenderer;
+//	public SpriteRenderer _spriteRenderer;
 
 	public Vector3 endPosition;
 	public Vector3 startPosition;
@@ -27,7 +27,8 @@ public class Node : MonoBehaviour {
 
 	[SerializeField]
 	public BoardPos boardPos = new BoardPos();
-	
+
+	private Sprite currentSprite;
 
 	public int typeId;	//id for the node type
 
@@ -42,10 +43,12 @@ public class Node : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+
 	}
 
 	public void setImage(Sprite sprite){
-		_spriteRenderer.sprite = sprite;
+		currentSprite = sprite;
+		GetComponent<SpriteRenderer>().sprite = sprite;
 	}
 	
 	public void setColor(float r, float g, float b, float a){

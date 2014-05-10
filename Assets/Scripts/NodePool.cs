@@ -13,16 +13,20 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public class NodePool
+public class NodePool: MonoBehaviour
 {
 
 	private List<Node> nodeList = new List<Node>();
 
 
-	public NodePool (int nodesSum)
-	{
-		prefabricateNodes(nodesSum);
+//	public NodePool (int nodesSum)
+//	{
+//		prefabricateNodes(nodesSum);
+//	}
+
+	void Start(){
 	}
+
 
 	public void unspawnNode(Node node){
 
@@ -69,22 +73,27 @@ public class NodePool
 	
 	public void prefabricateNodes(int nodesNum){
 		for (int i = 0 ; i < nodesNum; i++) {
-				
-			GameObject go = new GameObject();
-			go.name = "node";
-			Node node = go.AddComponent(typeof(Node)) as Node;
-			
-			SpriteRenderer spriteRenderer = go.AddComponent(typeof(SpriteRenderer)) as SpriteRenderer;
 
-			CircleCollider2D cc2d = go.AddComponent(typeof(CircleCollider2D)) as CircleCollider2D;
+			GameObject go = Instantiate(Resources.Load("node"))as GameObject;
+			Node node = go.GetComponent<Node>();
+			go.name = "node";
+//			Node node = go.AddComponent(typeof(Node)) as Node;
+
+
+//			GameObject go = new GameObject();
+//			go.name = "node";
+//			Node node = go.AddComponent(typeof(Node)) as Node;
+//			
+//			SpriteRenderer spriteRenderer = go.AddComponent(typeof(SpriteRenderer)) as SpriteRenderer;
+//
+//			CircleCollider2D cc2d = go.AddComponent(typeof(CircleCollider2D)) as CircleCollider2D;
 
 			//MASIH DI HARDCOOODEE
-			cc2d.center = new Vector2(1.04f, -1.04f);
-			cc2d.radius = 1;
-
-
-			node._spriteRenderer = spriteRenderer;
-			node._collider = cc2d;
+//			cc2d.center = new Vector2(1.04f, -1.04f);
+//			cc2d.radius = 1;
+//
+//			node._spriteRenderer = spriteRenderer;
+//			node._collider = cc2d;
 
 			node.spawned = false;
 			
