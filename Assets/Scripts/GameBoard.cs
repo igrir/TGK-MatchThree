@@ -126,7 +126,7 @@ public class GameBoard : MonoBehaviour {
 
 						}else{
 
-							selectPointer.SetActive(true);
+							selectPointer.SetActive(false);
 
 							//check it's right to select
 							int distanceCol = Mathf.Abs(node.boardPos.col-firstPos.col);
